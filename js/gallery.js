@@ -65,16 +65,8 @@ const images = [
 ];
 
 const galleryContainer = document.querySelector('.gallery');
-const galleryMarkup = createGalleryMarkup(images);
-
-galleryContainer.insertAdjacentHTML('beforeend', galleryMarkup);
-
-galleryContainer.addEventListener('click', onGalleryItemClick);
-
-function createGalleryMarkup(images) {
-  return images
-    .map(({ preview, original, description }) => {
-      return `
+  const galleryItemsMarkup = images.map(({ preview, original, description }) => {
+    return `
       <li class="gallery-item">
         <a class="gallery-link" href="${original}">
           <img
@@ -85,24 +77,19 @@ function createGalleryMarkup(images) {
           />
         </a>
       </li>
-      `;
-    })
-    .join('');
-}
-
-
-function onGalleryItemClick(event) {
-  event.preventDefault();
-
-  if (event.target.nodeName !== 'IMG') {
-    return;
-  }
-
-  const largeImageURL = event.target.dataset.source;
-
-  const instance = basicLightbox.create(`
-    <img src="${largeImageURL}" width="800" height="600">
-  `);
-
-  instance.show();
-}
+    `;
+  }).join('');
+  
+galleryContainer.innerHTML = galleryItemsMarkup;
+  
+ galleryContainer.addEventListener('click', event => {
+    event.preventDefault();
+    // nodeName — свойство, которое возвращает имя тега элемента. Если клик был произведён по изображению, event.target.nodeName вернёт строку "IMG"
+    if (event.target.nodeName !== 'IMG') return;
+    // вернет значение
+    const largeImageURL = event.target.dataset.source; 
+    
+    basicLightbox.create(`
+      <img src="${largeImageURL}" width="800" height="600">
+    `).show();
+  });
